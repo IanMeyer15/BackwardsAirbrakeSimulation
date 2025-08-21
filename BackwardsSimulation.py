@@ -1,0 +1,65 @@
+#Backwards Simulation
+from pyatmos import expo
+import matplotlib.pyplot as plt
+import numpy as np
+
+targetAltitude = 3048 #Target altitude in m
+step = .1 #Step size in m
+maxSpeed = 275 #Deployment limiter of airbrakes based on rocket speed
+R = 287.05 #Specific gas constant
+g = 9.81 #Acceleration of gravity
+m = 27.5 #Rocket's mass in kg
+v0 = .5 #Initial velocity of rocket in m/s
+brakeLevel = 1 #Percentage of airbrake deployment
+CdABody = .5376 #Drag*Area of rocket body
+
+fig, ax = plt.subplots(figsize=(8, 6))
+lines = []
+
+for i in range (11):
+    altitude = targetAltitude #Changing altitude
+    v = v0 #Changing velocity
+    brakeLevel = i/10.0 #Brake level as decimal for computing
+    CdABrakes = CdABody*.35*brakeLevel #Drag*Area of airbrakes
+    CdATotal = CdABody + CdABrakes #Total drag of the rocket
+    counter = 0 #Keeps track of the number of steps
+    velocities = [] #Holds the velocity information at each step for plotting
+    altitudes = [] #Holds the altitude information at each step for plotting
+    velocities.append(0) #initial starting conditions
+    altitudes.append(3048)
+    print(f"Given target altitude of: {targetAltitude} and a deployment level of {brakeLevel*100}%")
+
+    while v <= maxSpeed:
+        expo_geom = expo([altitude/1000]) # Access air density at altitude (km)
+        dvdh = -(-1*g-(.5*(1.0/m))*(float(expo_geom.rho))*v*v*CdATotal)/v #Change in velocity over altitude
+        altitude = altitude-step #Linear approximation for altitude
+        v = v+dvdh*step #Linear approximation for velocity
+        counter += 1
+        velocities.append(v) #Holds data for plotting 
+        altitudes.append(altitude)
+        #print(f"The change in velocity is: {dvdh*step}, the new velocity is {v}m")
+
+    (line,) = ax.plot(velocities, altitudes, label=f"{int(brakeLevel*100)}%")
+    lines.append(line)
+    print(f"the rocket will need to begin deployment at {altitude}m\n")
+
+leg = ax.legend(loc="upper right")
+for legline, origline in zip(leg.get_lines(), lines):
+    legline.set_picker(True)  # make legend entries clickable
+
+def on_pick(event):
+    legline = event.artist
+    index = leg.get_lines().index(legline)
+    origline = lines[index]
+    visible = not origline.get_visible()
+    origline.set_visible(visible)
+    legline.set_alpha(1.0 if visible else 0.2)  # dim legend if hidden
+    fig.canvas.draw()
+
+fig.canvas.mpl_connect("pick_event", on_pick)
+
+
+plt.title("Rocket Paths Given Varying Airbrake Deployment Levels")
+plt.xlabel("Velocity [m/s]")
+plt.ylabel("Altitude [m]")
+plt.show()
