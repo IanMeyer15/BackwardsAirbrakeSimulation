@@ -2,7 +2,28 @@
 from pyatmos import expo
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
+targetAltitude = 3048 #Target altitude in m
+maxSpeed = 275 #Deployment limiter of airbrakes based on rocket speed
+launchAngle = 86 #Launch angle in degrees from x-axis
+R = 287.05 #Specific gas constant
+g = 9.81 #Acceleration of gravity
+m = 27.5 #Rocket's mass in kg
+CdABody = .5376 #Drag*Area of rocket body
+x = 0 #Horizontal position of the rocket
+y = targetAltitude #Vertical position of the rocket
+position = (x, y) #Tuple representing positional vector of the rocket
+initialSpeed = .5 #Speed of rocket at target apogee in m/s (non-zero due to calculation issues)
+velocity = (initialSpeed*math.cos(math.radians(launchAngle)), initialSpeed*math.sin(math.radians(launchAngle))) #Velocity vector of the rocket at 
+
+fig, ax = plt.subplots(figsize=(8, 6))
+lines = []
+
+for i in range (11):
+    altitude = targetAltitude #Changing altitude
+
+''' 1-Dimensional Physics
 targetAltitude = 3048 #Target altitude in m
 step = .1 #Step size in m
 maxSpeed = 275 #Deployment limiter of airbrakes based on rocket speed
@@ -63,3 +84,4 @@ plt.title("Rocket Paths Given Varying Airbrake Deployment Levels")
 plt.xlabel("Velocity [m/s]")
 plt.ylabel("Altitude [m]")
 plt.show()
+'''
