@@ -1,9 +1,10 @@
 #Backwards Simulation
-from pyatmos import expo
+#from pyatmos import expo
 import matplotlib.pyplot as plt
 import numpy as np
-import math
+import math as Math
 
+''' #2-Dimensional Physics
 targetAltitude = 3048 #Target altitude in m
 maxSpeed = 275 #Deployment limiter of airbrakes based on rocket speed
 launchAngle = 86 #Launch angle in degrees from x-axis
@@ -22,12 +23,17 @@ lines = []
 
 for i in range (11):
     altitude = targetAltitude #Changing altitude
-
-''' 1-Dimensional Physics
+'''
+# 1-Dimensional Physics
 targetAltitude = 3048 #Target altitude in m
 step = .1 #Step size in m
 maxSpeed = 275 #Deployment limiter of airbrakes based on rocket speed
 R = 287.05 #Specific gas constant
+Ru = 8.314 #Universal gas constant
+T0 = 300 #Temp at sea level
+P0 = 101325 #Air pressure at sea level
+M = 0.0289644 #Molar mass of air
+L = .0098 #Lapse rate
 g = 9.81 #Acceleration of gravity
 m = 27.5 #Rocket's mass in kg
 v0 = .5 #Initial velocity of rocket in m/s
@@ -51,8 +57,11 @@ for i in range (11):
     print(f"Given target altitude of: {targetAltitude} and a deployment level of {brakeLevel*100}%")
 
     while v <= maxSpeed:
-        expo_geom = expo([altitude/1000]) # Access air density at altitude (km)
-        dvdh = -(-1*g-(.5*(1.0/m))*(float(expo_geom.rho))*v*v*CdATotal)/v #Change in velocity over altitude
+        #expo_geom = expo([altitude/1000]) # Access air density at altitude (km)
+        T = T0-(L*altitude)
+        P = P0*Math.exp(-1*M*g*altitude/(Ru*T))
+        rho = P/(R*T)
+        dvdh = -(-1*g-(.5*(1.0/m))*(rho)*v*v*CdATotal)/v #Change in velocity over altitude
         altitude = altitude-step #Linear approximation for altitude
         v = v+dvdh*step #Linear approximation for velocity
         counter += 1
@@ -84,4 +93,3 @@ plt.title("Rocket Paths Given Varying Airbrake Deployment Levels")
 plt.xlabel("Velocity [m/s]")
 plt.ylabel("Altitude [m]")
 plt.show()
-'''
