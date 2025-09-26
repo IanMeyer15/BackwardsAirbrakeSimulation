@@ -71,7 +71,7 @@ for i in range (6):
 
         """leg = ax[k, l].legend(loc="upper right")
         for legline, origline in zip(leg.get_lines(), lines):
-            legline.set_picker(True)  # make legend entries clickable"""
+            legline.set_picker(True)  # make legend entries clickable
 
         def on_pick(event):
             legline = event.artist
@@ -82,11 +82,12 @@ for i in range (6):
             legline.set_alpha(1.0 if visible else 0.2)  # dim legend if hidden
             fig.canvas.draw()
 
-        fig.canvas.mpl_connect("pick_event", on_pick)
+        fig.canvas.mpl_connect("pick_event", on_pick)"""
 
         ax[k,l].set_title(f"Angle: {90 - angle}% from vertical")
         ax[k,l].set_xlabel("Velocity [m/s]")
         ax[k,l].set_ylabel("Altitude [m]")
+        
 fig.tight_layout(h_pad=3, w_pad=5)
 plt.savefig('SimResults.png')
 plt.show()
