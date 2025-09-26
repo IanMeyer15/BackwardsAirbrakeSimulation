@@ -29,7 +29,7 @@ lines = []
 plt.suptitle(f"Rocket Paths Given Varying Airbrake Deployment Levels")
 
 for i in range (6):
-    angle = 65 + i*5
+    angle = 90 - i*5
     for j in range (11):
         altitude = targetAltitude #Changing altitude
         velocity = [initialSpeed*Math.cos(Math.radians(angle)), initialSpeed*Math.sin(Math.radians(angle))] #Set initial velocity
