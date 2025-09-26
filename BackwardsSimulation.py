@@ -24,10 +24,11 @@ p0 = [x, y] #Tuple representing positional vector of the rocket
 initialSpeed = .5 #Speed of rocket at target apogee in m/s (non-zero due to calculation issues)
 v0 = [initialSpeed*Math.cos(Math.radians(angle)), initialSpeed*Math.sin(Math.radians(angle))] #Velocity vector of the rocket at apogee
 
+fig, ax = plt.subplots(2, 3, figsize=(12, 8))
+lines = []
+plt.suptitle(f"Rocket Paths Given Varying Airbrake Deployment Levels")
 
 for i in range (6):
-    fig, ax = plt.subplots(figsize=(8, 6))
-    lines = []
     angle = 65 + i*5
     for j in range (11):
         altitude = targetAltitude #Changing altitude
@@ -62,13 +63,15 @@ for i in range (6):
             altitudes.append(altitude)
             #print(f"The change in velocity is: {dvydh*step}, the new velocity is {speed}m")
 
-        (line,) = ax.plot(velocities, altitudes, label=f"{int(brakeLevel*100)}%")
+        k = int(i/3)
+        l = i%3
+        (line,) = ax[k, l].plot(velocities, altitudes, label=f"{int(brakeLevel*100)}%")
         lines.append(line)
         print(f"the rocket will need to begin deployment at {altitude}m at speed {speed}\n")
 
-        leg = ax.legend(loc="upper right")
+        """leg = ax[k, l].legend(loc="upper right")
         for legline, origline in zip(leg.get_lines(), lines):
-            legline.set_picker(True)  # make legend entries clickable
+            legline.set_picker(True)  # make legend entries clickable"""
 
         def on_pick(event):
             legline = event.artist
@@ -81,10 +84,11 @@ for i in range (6):
 
         fig.canvas.mpl_connect("pick_event", on_pick)
 
-
-        plt.title(f"Rocket Paths Given Varying Airbrake Deployment Levels at Angle {angle}")
-        plt.xlabel("Velocity [m/s]")
-        plt.ylabel("Altitude [m]")
+        ax[k,l].set_title(f"Angle: {90 - angle}% from vertical")
+        ax[k,l].set_xlabel("Velocity [m/s]")
+        ax[k,l].set_ylabel("Altitude [m]")
+fig.tight_layout(h_pad=3, w_pad=5)
+plt.savefig('SimResults.png')
 plt.show()
 
             
